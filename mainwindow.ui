@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1048</width>
-    <height>699</height>
+    <width>952</width>
+    <height>621</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,6 +43,22 @@
        <size>
         <width>20</width>
         <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="2" column="1">
+     <spacer name="verticalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Fixed</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>60</height>
        </size>
       </property>
      </spacer>
@@ -557,42 +573,53 @@
         <item>
          <layout class="QHBoxLayout" name="horizontalLayout_7">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_6">
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QPushButton" name="pushButton_send">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>30</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>发送</string>
-              </property>
-             </widget>
+             <layout class="QVBoxLayout" name="verticalLayout_6">
+              <item>
+               <widget class="QPushButton" name="pushButton_send">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>30</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>发送</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_clear">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>100</width>
+                  <height>25</height>
+                 </size>
+                </property>
+                <property name="text">
+                 <string>清空</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
             <item>
-             <widget class="QPushButton" name="pushButton_clear">
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>25</height>
-               </size>
-              </property>
+             <widget class="QPushButton" name="pushButton_troggle">
               <property name="text">
-               <string>清空</string>
+               <string>切换页面</string>
               </property>
              </widget>
             </item>
@@ -620,22 +647,6 @@
       </property>
      </spacer>
     </item>
-    <item row="2" column="1">
-     <spacer name="verticalSpacer_4">
-      <property name="orientation">
-       <enum>Qt::Vertical</enum>
-      </property>
-      <property name="sizeType">
-       <enum>QSizePolicy::Fixed</enum>
-      </property>
-      <property name="sizeHint" stdset="0">
-       <size>
-        <width>20</width>
-        <height>60</height>
-       </size>
-      </property>
-     </spacer>
-    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -643,7 +654,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1048</width>
+     <width>952</width>
      <height>28</height>
     </rect>
    </property>
@@ -655,6 +666,16 @@
    </property>
   </action>
   <action name="action_openserial">
+   <property name="text">
+    <string>打开</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>打开</string>
+   </property>
+  </action>
+  <action name="action_2">
    <property name="text">
     <string>打开</string>
    </property>
