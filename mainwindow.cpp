@@ -34,6 +34,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if(serialPorts->isOpen())   // 增加关闭串口的检查
+    {
+        serialPorts->close();
+    }
+    delete serialPorts;
+    delete porttimer;
+    delete sendtimer;
     delete ui;
 }
 
