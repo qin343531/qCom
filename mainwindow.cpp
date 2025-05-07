@@ -6,6 +6,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->videoui = new window_video;
+    connect(this->videoui, &window_video::back_signal, this, &MainWindow::troggle_page);
 
     setWindowTitle("qCom");
     ui->comboBox_serialport->clear();
@@ -34,6 +36,14 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+    if(serialPorts->isOpen())   // 增加关闭串口的检查
+    {
+        serialPorts->close();
+    }
+    delete serialPorts;
+    delete porttimer;
+    delete sendtimer;
+    delete videoui;
     delete ui;
 }
 
@@ -304,3 +314,16 @@ void MainWindow::on_lineEdit_cmd_returnPressed()
     sendMsg();
     ui->lineEdit_cmd->clear();//清空发送内容
 }
+
+//切换页面
+void MainWindow::on_pushButton_troggle_clicked()
+{
+    this->hide();//隐藏当前页面
+    videoui->show();//打开页面2
+}
+
+ void MainWindow::troggle_page()
+ {
+     this->show();
+     videoui->hide();
+ }

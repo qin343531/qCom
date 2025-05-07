@@ -1,4 +1,4 @@
-QT       += core gui serialport
+QT       += core gui serialport multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -17,13 +17,20 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    window_video.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    window_video.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    window_video.ui
+
+
+INCLUDEPATH += /usr/include/opencv4
+LIBS += -lopencv_core -lopencv_imgproc -lopencv_highgui -lopencv_videoio
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
