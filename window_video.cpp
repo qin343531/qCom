@@ -241,10 +241,11 @@ void window_video::captureFrame()
     //自适应显示
     ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
 
-    static QElapsedTimer timer;
-    if (!timer.isValid()) timer.start();
-    qDebug() << "Time between frames (ms): " << timer.elapsed();
-    timer.restart();
+    //查看帧之间的耗时
+//    static QElapsedTimer timer;
+//    if (!timer.isValid()) timer.start();
+//    qDebug() << "Time between frames (ms): " << timer.elapsed();
+//    timer.restart();
 }
 
 void window_video::on_pushButton_close_clicked()
@@ -322,14 +323,12 @@ void window_video::on_pushButton_record_clicked()
         //停止录制->正在录制
         ui->pushButton_record->setText("停止");
         startRecord();
-        isRecord = true;
     }
     else
     {
         //正在录制->停止录制
         ui->pushButton_record->setText("录制");
         stopRecord();
-        isRecord = false;
     }
 
     // 获取保存路径
@@ -352,9 +351,11 @@ void window_video::startRecord()
     {
         ui->textBrowser_msg->append("无法保存视频");
         ui->pushButton_record->setText("录制");
+        isRecord = false;
         return;
     }
     ui->textBrowser_msg->append("开始录制视频");
+    isRecord = true;
 }
 
 //停止录制
@@ -369,4 +370,6 @@ void window_video::stopRecord()
 
     writer.release();  // 释放视频写入对象
     ui->textBrowser_msg->append("停止录制视频");
+    isRecord = false;
 }
+

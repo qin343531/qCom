@@ -67,6 +67,7 @@ private slots:
 
     void on_pushButton_record_clicked();
 
+
 signals:
     void back_signal();//切换页面信号
 
