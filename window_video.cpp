@@ -9,7 +9,9 @@ window_video::window_video(QWidget *parent) :
     setWindowTitle("视频终端");
     isPlay = false;
     isClose = false;
+    isSave = false;
     scene = new QGraphicsScene(this);   //创建场景
+    ui->graphicsView->setScene(scene);
     pixmapItem = new QGraphicsPixmapItem(); //创建图元
 
     search_videodev();//遍历系统视频设备
@@ -71,7 +73,7 @@ void window_video::on_pushButton_play_clicked()
     {
         isPlay = true;
         ui->pushButton_play->setText("暂停");
-        startcapture(ui->comboBox_videodev->currentIndex());
+        startcapture();
     }
     else
     {
@@ -126,8 +128,9 @@ int window_video::extractVideoNumber(const QString& devicePath)
     return -1; // 没找到时返回 -1
 }
 
-void window_video::startcapture(int devNumber)
+void window_video::startcapture()
 {
+    isSave = true;
     //提取设备号
     QString devpath = ui->comboBox_videodev->currentText();
     devNumber = extractVideoNumber(devpath);
@@ -140,9 +143,6 @@ void window_video::startcapture(int devNumber)
     // 设置分辨率（可选）
     setresolution();
     qDebug() << "设置分辨率（可选）";
-
-    ui->graphicsView->setScene(scene);
-    qDebug() << "setScene";
 
     pixmapItem = new QGraphicsPixmapItem(); //反复实例化
     scene->addItem(pixmapItem);
@@ -223,19 +223,78 @@ void window_video::captureFrame()
 
     //转为QImage
     QImage img((const uchar*)frame.data, frame.cols, frame.rows, QImage::Format_RGB888);
-
+    currentImage = img;
 
     //显示graphicsView上
     QPixmap pixmap = QPixmap::fromImage(img);
     // 更新图元
     pixmapItem->setPixmap(pixmap);
-
+    //自适应显示
     ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
 }
 
 void window_video::on_pushButton_close_clicked()
 {
     isClose = true;
+    isSave = false;
     stopcapture();
     ui->pushButton_play->setText("播放");
+}
+
+void window_video::on_pushButton_save_clicked()
+{
+    if(isSave)
+    {
+        if(isPlay)
+        {
+            //正在播放停止,已经暂停不需要再次停止
+            stopcapture();
+        }
+        QString fileName = "/home/qin/qt_project/Serialport/images_save/image_" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss")+".png";
+
+        currentImage.save(fileName);
+        ui->textBrowser_msg->append("保存成功,保存路径:/home/qin/qt_project/Serialport/images_save");
+        if(isPlay)
+        {
+            //恢复播放状态,暂停状态不需要播放
+            startcapture();
+        }
+    }
+    else
+    {
+        ui->textBrowser_msg->append("保存失败,无图像或未打开摄像头");
+    }
+}
+
+void window_video::on_pushButton_open_clicked()
+{
+    defaultPath = "/home/qin/qt_project/Serialport/images_save/";
+    //打开对话框,筛选出PNG文件
+    QString fileName = QFileDialog::getOpenFileName(this, "选择图片", defaultPath, "Images (*.png)");
+
+    if(!fileName.isEmpty())
+    {
+        stopcapture();
+        //更新默认路径
+        defaultPath = QFileInfo(fileName).absolutePath();
+
+        //加载图像
+        QPixmap pixmap(fileName);
+        if(!pixmap.isNull())
+        {
+            //显示图像
+            scene->clear();  // 清空之前的内容
+            pixmapItem = new QGraphicsPixmapItem();
+            scene->addItem(pixmapItem);
+            pixmapItem->setPixmap(pixmap);
+
+            ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
+            ui->textBrowser_msg->append("加载图片成功");
+        }
+        else
+        {
+            ui->textBrowser_msg->append("加载图片失败");
+        }
+
+    }
 }
