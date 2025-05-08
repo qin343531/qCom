@@ -43,6 +43,10 @@ MainWindow::~MainWindow()
     delete serialPorts;
     delete porttimer;
     delete sendtimer;
+<<<<<<< HEAD
+=======
+    delete videoui;
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     delete ui;
 }
 

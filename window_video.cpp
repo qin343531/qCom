@@ -9,9 +9,13 @@ window_video::window_video(QWidget *parent) :
     setWindowTitle("视频终端");
     isPlay = false;
     isClose = false;
+<<<<<<< HEAD
     isSave = false;
     scene = new QGraphicsScene(this);   //创建场景
     ui->graphicsView->setScene(scene);
+=======
+    scene = new QGraphicsScene(this);   //创建场景
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     pixmapItem = new QGraphicsPixmapItem(); //创建图元
 
     search_videodev();//遍历系统视频设备
@@ -73,7 +77,11 @@ void window_video::on_pushButton_play_clicked()
     {
         isPlay = true;
         ui->pushButton_play->setText("暂停");
+<<<<<<< HEAD
         startcapture();
+=======
+        startcapture(ui->comboBox_videodev->currentIndex());
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     }
     else
     {
@@ -128,9 +136,14 @@ int window_video::extractVideoNumber(const QString& devicePath)
     return -1; // 没找到时返回 -1
 }
 
+<<<<<<< HEAD
 void window_video::startcapture()
 {
     isSave = true;
+=======
+void window_video::startcapture(int devNumber)
+{
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     //提取设备号
     QString devpath = ui->comboBox_videodev->currentText();
     devNumber = extractVideoNumber(devpath);
@@ -144,6 +157,12 @@ void window_video::startcapture()
     setresolution();
     qDebug() << "设置分辨率（可选）";
 
+<<<<<<< HEAD
+=======
+    ui->graphicsView->setScene(scene);
+    qDebug() << "setScene";
+
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     pixmapItem = new QGraphicsPixmapItem(); //反复实例化
     scene->addItem(pixmapItem);
     qDebug() << "addItem";
@@ -223,19 +242,28 @@ void window_video::captureFrame()
 
     //转为QImage
     QImage img((const uchar*)frame.data, frame.cols, frame.rows, QImage::Format_RGB888);
+<<<<<<< HEAD
     currentImage = img;
+=======
+
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
 
     //显示graphicsView上
     QPixmap pixmap = QPixmap::fromImage(img);
     // 更新图元
     pixmapItem->setPixmap(pixmap);
+<<<<<<< HEAD
     //自适应显示
+=======
+
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
 }
 
 void window_video::on_pushButton_close_clicked()
 {
     isClose = true;
+<<<<<<< HEAD
     isSave = false;
     stopcapture();
     ui->pushButton_play->setText("播放");
@@ -298,3 +326,8 @@ void window_video::on_pushButton_open_clicked()
 
     }
 }
+=======
+    stopcapture();
+    ui->pushButton_play->setText("播放");
+}
+>>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
