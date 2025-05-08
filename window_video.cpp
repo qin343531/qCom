@@ -214,6 +214,11 @@ void window_video::captureFrame()
 {
     cv::Mat frame;
     cap>>frame;
+    if (isRecord)
+    {
+        //开始录制
+        writer.write(frame);  // 将帧写入视频文件
+    }
 
     if(frame.empty())
     {
@@ -224,7 +229,6 @@ void window_video::captureFrame()
 
     //转为RGB格式
     cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-
     //转为QImage
     QImage img((const uchar*)frame.data, frame.cols, frame.rows, QImage::Format_RGB888);
     currentImage = img;
@@ -236,6 +240,11 @@ void window_video::captureFrame()
     pixmapItem->setPixmap(pixmap);
     //自适应显示
     ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
+
+    static QElapsedTimer timer;
+    if (!timer.isValid()) timer.start();
+    qDebug() << "Time between frames (ms): " << timer.elapsed();
+    timer.restart();
 }
 
 void window_video::on_pushButton_close_clicked()
@@ -304,4 +313,60 @@ void window_video::on_pushButton_open_clicked()
     }
     stopcapture();
     ui->pushButton_play->setText("播放");
+}
+
+void window_video::on_pushButton_record_clicked()
+{
+    if(!isRecord)
+    {
+        //停止录制->正在录制
+        ui->pushButton_record->setText("停止");
+        startRecord();
+        isRecord = true;
+    }
+    else
+    {
+        //正在录制->停止录制
+        ui->pushButton_record->setText("录制");
+        stopRecord();
+        isRecord = false;
+    }
+
+    // 获取保存路径
+
+}
+
+//开始录制
+void window_video::startRecord()
+{
+    QString fileName = QDateTime::currentDateTime().toString("yyyyMMdd_HHmmss") + ".avi";
+    QString savePath = "/home/qin/qt_project/Serialport/videos_save/" + fileName;
+
+    if (savePath.isEmpty())
+    {
+        return;
+    }
+    // 设置视频写入对象
+    writer.open(savePath.toStdString(), cv::VideoWriter::fourcc('M', 'J', 'P', 'G'), fps, cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
+    if (!writer.isOpened())
+    {
+        ui->textBrowser_msg->append("无法保存视频");
+        ui->pushButton_record->setText("录制");
+        return;
+    }
+    ui->textBrowser_msg->append("开始录制视频");
+}
+
+//停止录制
+void window_video::stopRecord()
+{
+    if (!isRecord)
+    {
+        ui->textBrowser_msg->append("没有录制正在进行中");
+        ui->pushButton_record->setText("录制");
+        return;
+    }
+
+    writer.release();  // 释放视频写入对象
+    ui->textBrowser_msg->append("停止录制视频");
 }
