@@ -43,10 +43,6 @@ MainWindow::~MainWindow()
     delete serialPorts;
     delete porttimer;
     delete sendtimer;
-<<<<<<< HEAD
-=======
-    delete videoui;
->>>>>>> 4a5d97a33abaa675897096ad2681977e74f91a4f
     delete ui;
 }
 
@@ -282,24 +278,25 @@ void MainWindow::on_checkBox_timersend_stateChanged(int arg1)
     {
         switch(arg1)
         {
-        case Qt::Unchecked://未选中
+        case Qt::Unchecked:  // 未选中
             qDebug() << "正常发送" << endl;
             sendtimer->stop();
             break;
-        case Qt::Checked://勾选
-            qDebug() << "定时发送" << endl;
-            int sendtime = ui->lineEdit_send->text().toInt();
-            if (sendtime > 0)  // 如果转换成功并且时间大于0
-            {
-                qDebug() << "定时发送，发送时间：" << sendtime << "ms";
-                sendtimer->start(sendtime);  // 启动定时器
-            }
-            else
-            {
-                qDebug() << "请输入有效的发送时间（大于0的整数）";
+        case Qt::Checked:  // 勾选
+            {   // 添加花括号创建新的作用域
+                qDebug() << "定时发送" << endl;
+                int sendtime = ui->lineEdit_send->text().toInt();
+                if (sendtime > 0)  // 如果转换成功并且时间大于0
+                {
+                    qDebug() << "定时发送，发送时间：" << sendtime << "ms";
+                    sendtimer->start(sendtime);  // 启动定时器
+                }
+                else
+                {
+                    qDebug() << "请输入有效的发送时间（大于0的整数）";
+                }
             }
             break;
-
         }
     }
 }

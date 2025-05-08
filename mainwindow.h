@@ -12,9 +12,10 @@
 #include <QStackedWidget>
 #include "window_video.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
-QT_END_NAMESPACE
+namespace Ui {
+class MainWindow;
+}
+
 
 class MainWindow : public QMainWindow
 {
