@@ -67,23 +67,23 @@ void MainWindow::on_pushButton_serialop_clicked()
 {
     if(!isOpen)
     {
-        ui->pushButton_serialop->setText("关闭串口");
         isOpen = true;
+        if(!setparam_SerialPort())return ;
         tofalse_comboBox(false); //禁止其他控件可选
-        MainWindow::setparam_SerialPort();
+        ui->pushButton_serialop->setText("关闭串口");
     }
     else
     {
-        tofalse_comboBox(true);
-        ui->pushButton_serialop->setText("打开串口");
         serialPorts->close();//关闭串口
         disconnect(serialPorts, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
+        tofalse_comboBox(true);
+        ui->pushButton_serialop->setText("打开串口");
         isOpen = false;
     }
 }
 
 //配置串口参数
-void MainWindow::setparam_SerialPort()
+bool MainWindow::setparam_SerialPort()
 {
     //获取用户参数
     QString portname = ui->comboBox_serialport->currentText();  //获取串口设备
@@ -93,7 +93,7 @@ void MainWindow::setparam_SerialPort()
     int stop    = ui->comboBox_stop->currentIndex();            //获取停止位
     int flow    = ui->comboBox_flow->currentIndex();            //获取流控
 
-    qDebug()<<"portName="<<portname<<"bound="<<bound<<endl<<"val="<<val<<endl<<"data="<<data<<endl<<"stop="<<stop<<endl;
+    qDebug()<<"portName="<<portname<<"bound="<<bound<<Qt::endl<<"val="<<val<<Qt::endl<<"data="<<data<<Qt::endl<<"stop="<<stop<<Qt::endl;
 
     //对获取的参数进行判断
     //校验位需要判断指针索引
@@ -154,18 +154,20 @@ void MainWindow::setparam_SerialPort()
         QMessageBox::warning(this, "串口设备错误", "串口打开失败！\n原因：" + errorMeg);
         isOpen = false;
         ui->pushButton_serialop->setText("打开串口");
+        return false;
 
     }
     else
     {
-        qDebug() << "打开串口成功" <<endl;
+        qDebug() << "打开串口成功" << Qt::endl;
         if("串口未打开或不可写!!!" == ui->lineEdit_cmd->text())
             ui->lineEdit_cmd->clear();//清除发送控件的内容
         serialPorts->clear();//清除串口缓冲区
         //成功后连接槽函数
         connect(serialPorts, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
-        qDebug() << "连接回车槽函数" <<endl;
+        qDebug() << "连接回车槽函数" <<Qt::endl;
     }
+    return true;
 }
 
 //显示接收信息
@@ -243,7 +245,7 @@ void MainWindow::sendMsg()
             serialPorts->flush();//刷新缓冲区
             qDebug() << "发送数据：" << ui->lineEdit_cmd->text();
         }
-        qDebug() << "发送完毕"<<endl;  // 打印发送的十六进制数据
+        qDebug() << "发送完毕"<<Qt::endl;  // 打印发送的十六进制数据
     }
     else
     {
@@ -257,12 +259,15 @@ void MainWindow::sendMsg()
 //串口开启期间,禁止其他控件可选
 void MainWindow::tofalse_comboBox(bool status)
 {
-    ui->comboBox_val->setEnabled(status);
-    ui->comboBox_data->setEnabled(status);
-    ui->comboBox_flow->setEnabled(status);
-    ui->comboBox_stop->setEnabled(status);
-    ui->comboBox_bound->setEnabled(status);
-    ui->comboBox_serialport->setEnabled(status);
+    if(isOpen)
+    {
+        ui->comboBox_val->setEnabled(status);
+        ui->comboBox_data->setEnabled(status);
+        ui->comboBox_flow->setEnabled(status);
+        ui->comboBox_stop->setEnabled(status);
+        ui->comboBox_bound->setEnabled(status);
+        ui->comboBox_serialport->setEnabled(status);
+    }
 }
 
 //定时发送回调函数
@@ -279,12 +284,12 @@ void MainWindow::on_checkBox_timersend_stateChanged(int arg1)
         switch(arg1)
         {
         case Qt::Unchecked:  // 未选中
-            qDebug() << "正常发送" << endl;
+            qDebug() << "正常发送" << Qt::endl;
             sendtimer->stop();
             break;
         case Qt::Checked:  // 勾选
             {   // 添加花括号创建新的作用域
-                qDebug() << "定时发送" << endl;
+                qDebug() << "定时发送" << Qt::endl;
                 int sendtime = ui->lineEdit_send->text().toInt();
                 if (sendtime > 0)  // 如果转换成功并且时间大于0
                 {
@@ -310,7 +315,7 @@ void MainWindow::on_pushButton_clear_clicked()
 
 void MainWindow::on_lineEdit_cmd_returnPressed()
 {
-    qDebug()<<"回车"<<endl;
+    qDebug()<<"回车"<<Qt::endl;
     sendMsg();
     ui->lineEdit_cmd->clear();//清空发送内容
 }

@@ -48,17 +48,36 @@ void window_video::on_pushButton_troggle2_clicked()
     this->hide();
 }
 
-//遍历视频设备
 void window_video::search_videodev()
 {
-    const QList<QCameraInfo> cameras = QCameraInfo::availableCameras();
-    for(const QCameraInfo &camerainfo : cameras)
+    QDir v4lDir("/sys/class/video4linux");
+    QFileInfoList list = v4lDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    foreach (const QFileInfo &dirInfo, list)
     {
-        qDebug() << "Camera device:" << camerainfo.deviceName();
-        //qDebug() << "Camera Format:" << camerainfo.description();
-        ui->comboBox_videodev->addItem(camerainfo.deviceName());
+        QString devName = dirInfo.fileName();  // e.g., video0
+        QString devPath = "/dev/" + devName;
+
+        // 读取设备名称 (可选)
+        QFile nameFile(dirInfo.absoluteFilePath() + "/name");
+        QString cameraName = devPath;
+        if (nameFile.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            cameraName += " - " + QString(nameFile.readLine()).trimmed();
+            nameFile.close();
+        }
+
+        ui->comboBox_videodev->addItem(cameraName, devPath);
+        qDebug() << "检测到设备:" << cameraName;
+    }
+
+    if (ui->comboBox_videodev->count() == 0)
+    {
+        qDebug() << "没有检测到任何摄像头设备!";
     }
 }
+
+
 
 void window_video::on_pushButton_play_clicked()
 {
@@ -90,7 +109,7 @@ void window_video::stopcapture()
     // 停止定时器
     if (capTimer)
     {
-        qDebug() << "停止定时器" <<endl;
+        qDebug() << "停止定时器" <<Qt::endl;
         capTimer->stop();
         disconnect(capTimer, &QTimer::timeout, this, &window_video::captureFrame);
     }
@@ -104,14 +123,14 @@ void window_video::stopcapture()
         {
             scene->removeItem(pixmapItem);
             delete pixmapItem;
-            qDebug() << "pixmapItem" <<endl;
+            qDebug() << "pixmapItem" <<Qt::endl;
             pixmapItem = nullptr; // 设置为nullptr避免悬挂指针
         }
         scene->clear();
-        qDebug() << "清理图元" <<endl;
+        qDebug() << "清理图元" <<Qt::endl;
 
     }
-    qDebug() << "恢复控件状态" <<endl;
+    qDebug() << "恢复控件状态" <<Qt::endl;
     setcontrolsta(true); // 恢复控件状态
 }
 
@@ -156,7 +175,7 @@ void window_video::startcapture()
     fps = ui->comboBox_fps->currentText().toInt();
 
     capTimer->start(1000 / fps);
-    qDebug() << "当前帧率:" << fps <<endl;
+    qDebug() << "当前帧率:" << fps <<Qt::endl;
     connect(capTimer, &QTimer::timeout, this, &window_video::captureFrame);
     ui->textBrowser_msg->append("当前帧率:" + QString::number(fps));
 
@@ -166,7 +185,7 @@ void window_video::startcapture()
 //设置控件状态
 void window_video::setcontrolsta(bool status)
 {
-    qDebug() << "设置控件状态: " << status <<endl;
+    qDebug() << "设置控件状态: " << status <<Qt::endl;
     ui->comboBox_videodev->setEnabled(status);
     ui->comboBox_fps->setEnabled(status);
     ui->comboBox_resolution->setEnabled(status);
@@ -222,7 +241,7 @@ void window_video::captureFrame()
 
     if(frame.empty())
     {
-        //qDebug() <<"frame is empty"<<endl;
+        //qDebug() <<"frame is empty"<<Qt::endl;
         ui->textBrowser_msg->append("frame is empty");
         return;
     }

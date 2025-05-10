@@ -29,7 +29,7 @@ public:
     bool isOpen; //串口状态
     bool isSend; //发送状态
     QSerialPort *serialPorts;//串口对象
-    void setparam_SerialPort();
+    bool setparam_SerialPort();
     void tofalse_comboBox(bool status);
 
     window_video *videoui;  //保存页面2地址
