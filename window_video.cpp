@@ -7,6 +7,7 @@ window_video::window_video(QWidget *parent) :
 {
     ui->setupUi(this);
     setWindowTitle("视频终端");
+
     isPlay = false;
     isClose = false;
     isSave = false;
@@ -17,10 +18,7 @@ window_video::window_video(QWidget *parent) :
 
     search_videodev();//遍历系统视频设备
     videoui_init(); //初始化ui界面参数
-    //创建定时器
-    capTimer = new QTimer(this);
-    capTimer->stop();
-    connect(capTimer, &QTimer::timeout, this, &window_video::captureFrame);
+
 }
 
 window_video::~window_video()
@@ -106,12 +104,14 @@ void window_video::on_pushButton_play_clicked()
 
 void window_video::stopcapture()
 {
-    // 停止定时器
-    if (capTimer)
+    if(m_capThread)
     {
-        qDebug() << "停止定时器" <<Qt::endl;
-        capTimer->stop();
-        disconnect(capTimer, &QTimer::timeout, this, &window_video::captureFrame);
+        m_capThread->stopCapture();
+    }
+    if(m_thread && m_thread->isRunning())
+    {
+        m_thread->quit();
+        m_thread->wait();
     }
     //pixmapItem的内存释放需要放在scene前面,否则会导致崩溃,scene->clear会清除pixmapItem项,但是不会清除内存
     // 清理图元
@@ -123,14 +123,14 @@ void window_video::stopcapture()
         {
             scene->removeItem(pixmapItem);
             delete pixmapItem;
-            qDebug() << "pixmapItem" <<Qt::endl;
+            //qDebug() << "pixmapItem" <<Qt::endl;
             pixmapItem = nullptr; // 设置为nullptr避免悬挂指针
         }
         scene->clear();
-        qDebug() << "清理图元" <<Qt::endl;
+        //qDebug() << "清理图元" <<Qt::endl;
 
     }
-    qDebug() << "恢复控件状态" <<Qt::endl;
+    //qDebug() << "恢复控件状态" <<Qt::endl;
     setcontrolsta(true); // 恢复控件状态
 }
 
@@ -150,36 +150,45 @@ int window_video::extractVideoNumber(const QString& devicePath)
 
 void window_video::startcapture()
 {
+    // 创建线程对象
+    m_thread = new QThread(this);
+    m_capThread = new capThread;
+    m_capThread->moveToThread(m_thread);
+
+    // 连接信号槽
+    connect(this, &window_video::startthread, m_capThread, &capThread::capWorking);
+    connect(m_capThread, &capThread::finish, this, &window_video::displayFrame);
+    connect(m_thread, &QThread::finished, m_capThread, &QObject::deleteLater);
+
+
     isSave = true;
     //提取设备号
-    QString devpath = ui->comboBox_videodev->currentText();
-    devNumber = extractVideoNumber(devpath);
-    if(!cap.open(devNumber))
+    QString devpath = ui->comboBox_videodev->currentData().toString();  // 使用currentData获取完整设备路径
+    if(!cap.open(devpath.toStdString()))  // 使用完整路径打开设备
     {
-        qDebug() << "Failed to open camera!";
+        qDebug() << "Failed to open camera:" << devpath;
         ui->textBrowser_msg->append("Failed to open camera!");
         return;
     }
-    // 设置分辨率（可选）
+    
+    // 设置分辨率
     setresolution();
-    qDebug() << "设置分辨率（可选）";
-
-    ui->graphicsView->setScene(scene);
-    qDebug() << "setScene";
-
-    pixmapItem = new QGraphicsPixmapItem(); //反复实例化
+    
+    scene->clear();  // 清理之前的场景
+    pixmapItem = new QGraphicsPixmapItem();
     scene->addItem(pixmapItem);
-    qDebug() << "addItem";
+    ui->graphicsView->setScene(scene);
 
-    //获取帧率
     fps = ui->comboBox_fps->currentText().toInt();
-
-    capTimer->start(1000 / fps);
-    qDebug() << "当前帧率:" << fps <<Qt::endl;
-    connect(capTimer, &QTimer::timeout, this, &window_video::captureFrame);
     ui->textBrowser_msg->append("当前帧率:" + QString::number(fps));
 
     setcontrolsta(false);
+    
+    // 启动线程
+    if (!m_thread->isRunning()) {
+        m_thread->start();
+    }
+    emit startthread(&cap);
 }
 
 //设置控件状态
@@ -194,7 +203,8 @@ void window_video::setcontrolsta(bool status)
 //设置分辨率
 void window_video::setresolution()
 {
-    int height, width;
+    int height = 480;  // 设置默认值
+    int width = 640;   // 设置默认值
     int reso = ui->comboBox_resolution->currentIndex();
     switch (reso)
     {
@@ -228,44 +238,6 @@ void window_video::setresolution()
 
 }
 
-//更新视频帧
-void window_video::captureFrame()
-{
-    cv::Mat frame;
-    cap>>frame;
-    if (isRecord)
-    {
-        //开始录制
-        writer.write(frame);  // 将帧写入视频文件
-    }
-
-    if(frame.empty())
-    {
-        //qDebug() <<"frame is empty"<<Qt::endl;
-        ui->textBrowser_msg->append("frame is empty");
-        return;
-    }
-
-    //转为RGB格式
-    cv::cvtColor(frame, frame, cv::COLOR_BGR2RGB);
-    //转为QImage
-    QImage img((const uchar*)frame.data, frame.cols, frame.rows, QImage::Format_RGB888);
-    currentImage = img;
-
-
-    //显示graphicsView上
-    QPixmap pixmap = QPixmap::fromImage(img);
-    // 更新图元
-    pixmapItem->setPixmap(pixmap);
-    //自适应显示
-    ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
-
-    //查看帧之间的耗时
-//    static QElapsedTimer timer;
-//    if (!timer.isValid()) timer.start();
-//    qDebug() << "Time between frames (ms): " << timer.elapsed();
-//    timer.restart();
-}
 
 void window_video::on_pushButton_close_clicked()
 {
@@ -388,7 +360,30 @@ void window_video::stopRecord()
     }
 
     writer.release();  // 释放视频写入对象
+    ui->textBrowser_msg->append("保存成功,保存路径:/home/qin/qt_project/Serialport/videos_save");
     ui->textBrowser_msg->append("停止录制视频");
     isRecord = false;
+}
+
+void window_video::displayFrame(QImage img)
+{
+    if (!isPlay) return;  // 如果不是播放状态，不更新画面
+    
+    currentImage = img;  // 保存当前帧用于截图
+    QPixmap pixmap = QPixmap::fromImage(img);
+    if (pixmapItem) 
+    {
+        pixmapItem->setPixmap(pixmap);
+        ui->graphicsView->fitInView(pixmapItem, Qt::KeepAspectRatio);
+    }
+    
+    // 如果正在录制，需要将QImage转换回cv::Mat进行保存
+    if (isRecord) 
+    {
+        // 转换QImage为cv::Mat
+        cv::Mat frame(img.height(), img.width(), CV_8UC3, (void*)img.constBits(), img.bytesPerLine());
+        cv::cvtColor(frame, frame, cv::COLOR_RGB2BGR);  // 转换回BGR格式
+        writer.write(frame);
+    }
 }
 

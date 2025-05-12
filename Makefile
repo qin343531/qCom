@@ -52,13 +52,17 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp \
+SOURCES       = capthread.cpp \
+		main.cpp \
 		mainwindow.cpp \
-		window_video.cpp moc_mainwindow.cpp \
+		window_video.cpp moc_capthread.cpp \
+		moc_mainwindow.cpp \
 		moc_window_video.cpp
-OBJECTS       = main.o \
+OBJECTS       = capthread.o \
+		main.o \
 		mainwindow.o \
 		window_video.o \
+		moc_capthread.o \
 		moc_mainwindow.o \
 		moc_window_video.o
 DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
@@ -255,8 +259,10 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		Serialport.pro mainwindow.h \
-		window_video.h main.cpp \
+		Serialport.pro capthread.h \
+		mainwindow.h \
+		window_video.h capthread.cpp \
+		main.cpp \
 		mainwindow.cpp \
 		window_video.cpp
 QMAKE_TARGET  = Serialport
@@ -676,8 +682,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/local/Qt-5.15.3/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h window_video.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp window_video.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents capthread.h mainwindow.h window_video.h $(DISTDIR)/
+	$(COPY_FILE) --parents capthread.cpp main.cpp mainwindow.cpp window_video.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui window_video.ui $(DISTDIR)/
 
 
@@ -710,9 +716,104 @@ compiler_moc_predefs_clean:
 moc_predefs.h: /usr/local/Qt-5.15.3/mkspecs/features/data/dummy.cpp
 	g++ -pipe -O2 -std=gnu++11 -Wall -Wextra -dM -E -o moc_predefs.h /usr/local/Qt-5.15.3/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_window_video.cpp
+compiler_moc_header_make_all: moc_capthread.cpp moc_mainwindow.cpp moc_window_video.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_window_video.cpp
+	-$(DEL_FILE) moc_capthread.cpp moc_mainwindow.cpp moc_window_video.cpp
+moc_capthread.cpp: capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QObject \
+		/usr/local/Qt-5.15.3/include/QtCore/qobject.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobjectdefs.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qnamespace.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qglobal.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qconfig-bootstrapped.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qconfig.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtcore-config.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsystemdetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qprocessordetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcompilerdetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtypeinfo.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsysinfo.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlogging.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qflags.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbasicatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_bootstrap.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qgenericatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_cxx11.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_msvc.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qglobalstatic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmutex.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qnumeric.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qversiontagging.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobjectdefs_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstring.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qchar.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbytearray.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qrefcount.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qarraydata.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringliteral.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringalgorithms.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringview.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringbuilder.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qalgorithms.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qiterator.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qhashfunctions.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qpair.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvector.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontainertools_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qpoint.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbytearraylist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringlist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qregexp.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringmatcher.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcoreevent.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qscopedpointer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmetatype.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvarlengtharray.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontainerfwd.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobject_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/qdebug.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qhash.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmap.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtextstream.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qiodevice.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlocale.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvariant.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qshareddata.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qset.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontiguouscache.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsharedpointer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsharedpointer_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
+		/usr/local/Qt-5.15.3/include/QtCore/qthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdeadlinetimer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qelapsedtimer.h \
+		/usr/local/Qt-5.15.3/include/QtGui/QImage \
+		/usr/local/Qt-5.15.3/include/QtGui/qimage.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtguiglobal.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtgui-config.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qcolor.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qrgb.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qrgba64.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpaintdevice.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qwindowdefs.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qwindowdefs_win.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qrect.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmargins.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsize.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpixelformat.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtransform.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qmatrix.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpolygon.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qregion.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdatastream.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qline.h \
+		moc_predefs.h \
+		/usr/local/Qt-5.15.3/bin/moc
+	/usr/local/Qt-5.15.3/bin/moc $(DEFINES) --include /home/qin/qt_project/Serialport/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/qin/qt_project/Serialport -I/usr/include/opencv4 -I/usr/local/Qt-5.15.3/include -I/usr/local/Qt-5.15.3/include/QtMultimedia -I/usr/local/Qt-5.15.3/include/QtWidgets -I/usr/local/Qt-5.15.3/include/QtGui -I/usr/local/Qt-5.15.3/include/QtSerialPort -I/usr/local/Qt-5.15.3/include/QtNetwork -I/usr/local/Qt-5.15.3/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include capthread.h -o moc_capthread.cpp
+
 moc_mainwindow.cpp: mainwindow.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QMainWindow \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qmainwindow.h \
@@ -991,6 +1092,9 @@ moc_mainwindow.cpp: mainwindow.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsPixmapItem \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsitem.h \
 		/usr/local/Qt-5.15.3/include/QtGui/qpainterpath.h \
+		capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
 		moc_predefs.h \
 		/usr/local/Qt-5.15.3/bin/moc
 	/usr/local/Qt-5.15.3/bin/moc $(DEFINES) --include /home/qin/qt_project/Serialport/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/qin/qt_project/Serialport -I/usr/include/opencv4 -I/usr/local/Qt-5.15.3/include -I/usr/local/Qt-5.15.3/include/QtMultimedia -I/usr/local/Qt-5.15.3/include/QtWidgets -I/usr/local/Qt-5.15.3/include/QtGui -I/usr/local/Qt-5.15.3/include/QtSerialPort -I/usr/local/Qt-5.15.3/include/QtNetwork -I/usr/local/Qt-5.15.3/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include mainwindow.h -o moc_mainwindow.cpp
@@ -1137,6 +1241,12 @@ moc_window_video.cpp: window_video.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsPixmapItem \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsitem.h \
 		/usr/local/Qt-5.15.3/include/QtGui/qpainterpath.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QObject \
+		capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
+		/usr/local/Qt-5.15.3/include/QtCore/qthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdeadlinetimer.h \
 		moc_predefs.h \
 		/usr/local/Qt-5.15.3/bin/moc
 	/usr/local/Qt-5.15.3/bin/moc $(DEFINES) --include /home/qin/qt_project/Serialport/moc_predefs.h -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -I/home/qin/qt_project/Serialport -I/usr/include/opencv4 -I/usr/local/Qt-5.15.3/include -I/usr/local/Qt-5.15.3/include/QtMultimedia -I/usr/local/Qt-5.15.3/include/QtWidgets -I/usr/local/Qt-5.15.3/include/QtGui -I/usr/local/Qt-5.15.3/include/QtSerialPort -I/usr/local/Qt-5.15.3/include/QtNetwork -I/usr/local/Qt-5.15.3/include/QtCore -I/usr/include/c++/5 -I/usr/include/x86_64-linux-gnu/c++/5 -I/usr/include/c++/5/backward -I/usr/lib/gcc/x86_64-linux-gnu/5/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/5/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include window_video.h -o moc_window_video.cpp
@@ -1165,6 +1275,99 @@ compiler_lex_clean:
 compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_uic_clean 
 
 ####### Compile
+
+capthread.o: capthread.cpp capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QObject \
+		/usr/local/Qt-5.15.3/include/QtCore/qobject.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobjectdefs.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qnamespace.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qglobal.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qconfig-bootstrapped.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qconfig.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtcore-config.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsystemdetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qprocessordetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcompilerdetection.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtypeinfo.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsysinfo.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlogging.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qflags.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbasicatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_bootstrap.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qgenericatomic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_cxx11.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qatomic_msvc.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qglobalstatic.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmutex.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qnumeric.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qversiontagging.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobjectdefs_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstring.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qchar.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbytearray.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qrefcount.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qarraydata.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringliteral.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringalgorithms.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringview.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringbuilder.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qalgorithms.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qiterator.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qhashfunctions.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qpair.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvector.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontainertools_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qpoint.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qbytearraylist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringlist.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qregexp.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qstringmatcher.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcoreevent.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qscopedpointer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmetatype.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvarlengtharray.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontainerfwd.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qobject_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/qdebug.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qhash.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmap.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qtextstream.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qiodevice.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qlocale.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qvariant.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qshareddata.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qset.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcontiguouscache.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsharedpointer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsharedpointer_impl.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
+		/usr/local/Qt-5.15.3/include/QtCore/qthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdeadlinetimer.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qelapsedtimer.h \
+		/usr/local/Qt-5.15.3/include/QtGui/QImage \
+		/usr/local/Qt-5.15.3/include/QtGui/qimage.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtguiglobal.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtgui-config.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qcolor.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qrgb.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qrgba64.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpaintdevice.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qwindowdefs.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qwindowdefs_win.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qrect.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qmargins.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qsize.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpixelformat.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtransform.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qmatrix.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpolygon.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qregion.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdatastream.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qline.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o capthread.o capthread.cpp
 
 main.o: main.cpp mainwindow.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QMainWindow \
@@ -1444,6 +1647,9 @@ main.o: main.cpp mainwindow.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsPixmapItem \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsitem.h \
 		/usr/local/Qt-5.15.3/include/QtGui/qpainterpath.h \
+		capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QApplication \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qapplication.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qdesktopwidget.h \
@@ -1729,7 +1935,62 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsPixmapItem \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsitem.h \
 		/usr/local/Qt-5.15.3/include/QtGui/qpainterpath.h \
-		ui_mainwindow.h
+		capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
+		ui_mainwindow.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QVariant \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QAction \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qaction.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qactiongroup.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QApplication \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qapplication.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qdesktopwidget.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qguiapplication.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qinputmethod.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QCheckBox \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qcheckbox.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractbutton.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QComboBox \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qcombobox.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractitemdelegate.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstyleoption.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractspinbox.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qvalidator.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qslider.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractslider.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstyle.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtabbar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qrubberband.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QGridLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qgridlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlayoutitem.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qboxlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QHBoxLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QLabel \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlabel.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QLineEdit \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlineedit.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextcursor.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextformat.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpen.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextoption.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QMenuBar \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qmenubar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qmenu.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QPushButton \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qpushbutton.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QSpacerItem \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QStatusBar \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstatusbar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QTextBrowser \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtextbrowser.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtextedit.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractscrollarea.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextdocument.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QVBoxLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o mainwindow.o mainwindow.cpp
 
 window_video.o: window_video.cpp window_video.h \
@@ -1874,8 +2135,74 @@ window_video.o: window_video.cpp window_video.h \
 		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsPixmapItem \
 		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsitem.h \
 		/usr/local/Qt-5.15.3/include/QtGui/qpainterpath.h \
-		ui_window_video.h
+		/usr/local/Qt-5.15.3/include/QtCore/QObject \
+		capthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QDebug \
+		/usr/local/Qt-5.15.3/include/QtCore/QThread \
+		/usr/local/Qt-5.15.3/include/QtCore/qthread.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qdeadlinetimer.h \
+		ui_window_video.h \
+		/usr/local/Qt-5.15.3/include/QtCore/QVariant \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QApplication \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qapplication.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qcoreapplication.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qeventloop.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qdesktopwidget.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qguiapplication.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qinputmethod.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QComboBox \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qcombobox.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractitemdelegate.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstyleoption.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractspinbox.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qvalidator.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qregularexpression.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qslider.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractslider.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstyle.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtabbar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qrubberband.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qframe.h \
+		/usr/local/Qt-5.15.3/include/QtCore/qabstractitemmodel.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QGraphicsView \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsview.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpainter.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextoption.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qpen.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qscrollarea.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractscrollarea.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qgraphicsscene.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QGridLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qgridlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlayoutitem.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qboxlayout.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QHBoxLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QLabel \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qlabel.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QMenuBar \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qmenubar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qmenu.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qaction.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qactiongroup.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QPushButton \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qpushbutton.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qabstractbutton.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QSpacerItem \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QStatusBar \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qstatusbar.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QTextBrowser \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtextbrowser.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/qtextedit.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextdocument.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextcursor.h \
+		/usr/local/Qt-5.15.3/include/QtGui/qtextformat.h \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QVBoxLayout \
+		/usr/local/Qt-5.15.3/include/QtWidgets/QWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o window_video.o window_video.cpp
+
+moc_capthread.o: moc_capthread.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_capthread.o moc_capthread.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
