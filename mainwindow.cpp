@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->comboBox_serialport->clear();
     isOpen = false;
     isSend = false;
+    isTimeSend = false;
     serialPorts = new QSerialPort(this);//初始化串口对象
     porttimer = new QTimer(this);   //初始化定时器
     connect(porttimer, &QTimer::timeout, this, &MainWindow::updateserialPorts);//连接槽函数，每一秒更新一次设备
@@ -77,6 +78,7 @@ void MainWindow::on_pushButton_serialop_clicked()
         serialPorts->close();//关闭串口
         disconnect(serialPorts, &QSerialPort::readyRead, this, &MainWindow::readSerialData);
         tofalse_comboBox(true);
+        sendtimer->stop();//停止定时发送
         ui->pushButton_serialop->setText("打开串口");
         isOpen = false;
     }
@@ -237,6 +239,7 @@ void MainWindow::sendMsg()
             hexData.append("\n");
             serialPorts->write(hexData);
             serialPorts->flush();//刷新缓冲区
+
             qDebug() << "发送数据（十六进制）：" << hexData;  // 打印发送的十六进制数据
         }
         else
@@ -253,6 +256,23 @@ void MainWindow::sendMsg()
         qDebug() << "串口未打开或不可写!!!";
         ui->lineEdit_cmd->setText("串口未打开或不可写!!!");
         sendtimer->stop();
+    }
+    //判断是否定时发送
+    if(ui->checkBox_timersend->isChecked())
+    {
+        //是定时发送
+        qDebug() << "定时发送" << Qt::endl;
+        int sendtime = ui->lineEdit_send->text().toInt();
+        if (sendtime > 0)  // 如果转换成功并且时间大于0
+        {
+            qDebug() << "定时发送，发送时间：" << sendtime << "ms";
+            sendtimer->start(sendtime);  // 启动定时器
+        }
+        else
+        {
+            qDebug() << "请输入有效的发送时间（大于0的整数）";
+
+        }
     }
 }
 
@@ -277,34 +297,34 @@ void MainWindow::sendcallback()
 }
 
 //勾选定时发送
-void MainWindow::on_checkBox_timersend_stateChanged(int arg1)
-{
-    if(isOpen)
-    {
-        switch(arg1)
-        {
-        case Qt::Unchecked:  // 未选中
-            qDebug() << "正常发送" << Qt::endl;
-            sendtimer->stop();
-            break;
-        case Qt::Checked:  // 勾选
-            {   // 添加花括号创建新的作用域
-                qDebug() << "定时发送" << Qt::endl;
-                int sendtime = ui->lineEdit_send->text().toInt();
-                if (sendtime > 0)  // 如果转换成功并且时间大于0
-                {
-                    qDebug() << "定时发送，发送时间：" << sendtime << "ms";
-                    sendtimer->start(sendtime);  // 启动定时器
-                }
-                else
-                {
-                    qDebug() << "请输入有效的发送时间（大于0的整数）";
-                }
-            }
-            break;
-        }
-    }
-}
+//void MainWindow::on_checkBox_timersend_stateChanged(int arg1)
+//{
+//    if(isOpen)
+//    {
+//        switch(arg1)
+//        {
+//        case Qt::Unchecked:  // 未选中
+//            qDebug() << "正常发送" << Qt::endl;
+//            sendtimer->stop();
+//            break;
+//        case Qt::Checked:  // 勾选
+//            {   // 添加花括号创建新的作用域
+//                qDebug() << "定时发送" << Qt::endl;
+//                int sendtime = ui->lineEdit_send->text().toInt();
+//                if (sendtime > 0)  // 如果转换成功并且时间大于0
+//                {
+//                    qDebug() << "定时发送，发送时间：" << sendtime << "ms";
+//                    sendtimer->start(sendtime);  // 启动定时器
+//                }
+//                else
+//                {
+//                    qDebug() << "请输入有效的发送时间（大于0的整数）";
+//                }
+//            }
+//            break;
+//        }
+//    }
+//}
 
 void MainWindow::on_pushButton_clear_clicked()
 {

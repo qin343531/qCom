@@ -28,6 +28,7 @@ public:
     QTimer *sendtimer;  //创建定时发送对象
     bool isOpen; //串口状态
     bool isSend; //发送状态
+    bool isTimeSend;//定时发送
     QSerialPort *serialPorts;//串口对象
     bool setparam_SerialPort();
     void tofalse_comboBox(bool status);
@@ -44,7 +45,7 @@ private slots:
 
     void on_pushButton_send_clicked();
 
-    void on_checkBox_timersend_stateChanged(int arg1);
+    //void on_checkBox_timersend_stateChanged(int arg1);
 
     void on_pushButton_clear_clicked();
 
