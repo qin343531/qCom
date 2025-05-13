@@ -10,7 +10,7 @@ void capThread::stopCapture()
     m_stop = true;
 }
 
-void capThread::capWorking(cv::VideoCapture* cap)
+void capThread::capWorking(cv::VideoCapture* cap, int fps)
 {
     if (!cap || !cap->isOpened()) {
         qDebug() << "Camera not opened in thread";
@@ -40,6 +40,7 @@ void capThread::capWorking(cv::VideoCapture* cap)
                   frame.step, QImage::Format_RGB888);
         
         emit finish(img.copy());
-        QThread::msleep(1000/30);  // 限制帧率约30fps
+        QThread::msleep(1000/fps);  // 限制帧率约30fps
+        //qDebug() << "fps:"<< fps << "msleep:" << 1000/fps;
     }
 }

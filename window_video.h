@@ -73,7 +73,7 @@ private slots:
 signals:
     void back_signal();//切换页面信号
     void startcap();//开始捕获视频
-    void startthread(cv::VideoCapture* cap);//开始线程捕获视频
+    void startthread(cv::VideoCapture* cap, int fps);//开始线程捕获视频
 
 private:
     Ui::window_video *ui;

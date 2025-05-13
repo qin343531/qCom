@@ -15,7 +15,7 @@ public:
     void stopCapture(); // 添加停止方法
 
 public slots:    
-    void capWorking(cv::VideoCapture* cap);
+    void capWorking(cv::VideoCapture* cap, int fps);
 
 signals:
     void finish(QImage img); // 修改为传值而不是指针

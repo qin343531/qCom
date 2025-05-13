@@ -188,13 +188,13 @@ void window_video::startcapture()
     if (!m_thread->isRunning()) {
         m_thread->start();
     }
-    emit startthread(&cap);
+    emit startthread(&cap, fps);
 }
 
 //设置控件状态
 void window_video::setcontrolsta(bool status)
 {
-    qDebug() << "设置控件状态: " << status <<Qt::endl;
+    //qDebug() << "设置控件状态: " << status <<Qt::endl;
     ui->comboBox_videodev->setEnabled(status);
     ui->comboBox_fps->setEnabled(status);
     ui->comboBox_resolution->setEnabled(status);
