@@ -5,8 +5,7 @@ executable="$1"
 lib_dir="$2"
 
 # 下载依赖库
-sudo apt-get install libqt5serialport5-dev qtmultimedia5-dev
-
+sudo apt-get install libqt5serialport5 libqt5serialport5-dev qtmultimedia5-dev
 # 检查可执行文件是否存在
 if [[ ! -f "$executable" ]]; then
   echo "错误: 找不到可执行文件 $executable"
